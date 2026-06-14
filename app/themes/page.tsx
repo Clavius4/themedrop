@@ -2,8 +2,10 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import ThemeCard from '@/components/ThemeCard'
 import FilterBar from '@/components/FilterBar'
-import { THEMES } from '@/lib/themes'
 import { OS, Category } from '@/types'
+import { getThemes } from '@/lib/db'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'All Themes',
@@ -14,6 +16,7 @@ interface SearchParams { os?: string; category?: string }
 
 export default async function ThemesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { os, category } = await searchParams
+  const THEMES = await getThemes()
 
   const filtered = THEMES.filter(t => {
     const matchOS = !os || os === 'all' || t.downloads.some(d => d.os === os)

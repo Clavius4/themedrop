@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ThemeCard from '@/components/ThemeCard'
-import { THEMES, CATEGORIES } from '@/lib/themes'
+import { CATEGORIES } from '@/lib/themes'
+import { getThemes } from '@/lib/db'
+
+export const revalidate = 60
 
 interface Props { params: Promise<{ category: string }> }
 
@@ -24,7 +27,8 @@ export default async function CategoryPage({ params }: Props) {
   const cat = CATEGORIES.find(c => c.slug === category)
   if (!cat) notFound()
 
-  const themes = THEMES.filter(t => t.category === category)
+  const allThemes = await getThemes()
+  const themes = allThemes.filter(t => t.category === category)
 
   return (
     <div className="pt-24 pb-20">

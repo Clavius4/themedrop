@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { ArrowRight, Zap, Globe, Monitor, Terminal, Layers } from 'lucide-react'
 import HeroSection from '@/components/HeroSection'
 import ThemeCard from '@/components/ThemeCard'
-import { THEMES, CATEGORIES, OS_INFO } from '@/lib/themes'
+import { CATEGORIES, OS_INFO } from '@/lib/themes'
+import { getThemes } from '@/lib/db'
+
+export const revalidate = 60
 
 const FEATURES = [
   { icon: Globe,    title: 'Cross-Platform',  desc: 'Every theme ships for Windows, macOS, Ubuntu/GNOME, and KDE Plasma. One download per OS — everything included.' },
@@ -13,7 +16,8 @@ const FEATURES = [
   { icon: ArrowRight, title: 'More Every Week', desc: 'New theme drops weekly — TV shows, gaming, anime, minimal, cyberpunk. Submit your own coming soon.' },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  const THEMES = await getThemes()
   const featured = THEMES.filter(t => t.featured)
   const recent   = THEMES.slice(0, 6)
 

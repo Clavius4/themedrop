@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
-import { THEMES } from '@/lib/themes'
+import { getThemes } from '@/lib/db'
+
+export const revalidate = 60
 
 export async function GET() {
-  return NextResponse.json(THEMES)
+  const themes = await getThemes()
+  return NextResponse.json(themes)
 }

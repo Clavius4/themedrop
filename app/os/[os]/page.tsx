@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ThemeCard from '@/components/ThemeCard'
-import { THEMES, OS_INFO } from '@/lib/themes'
+import { OS_INFO } from '@/lib/themes'
 import { OS } from '@/types'
+import { getThemes } from '@/lib/db'
+
+export const revalidate = 60
 
 interface Props { params: Promise<{ os: string }> }
 
@@ -25,7 +28,8 @@ export default async function OSPage({ params }: Props) {
   const info = OS_INFO[os]
   if (!info) notFound()
 
-  const themes = THEMES.filter(t => t.downloads.some(d => d.os === os))
+  const allThemes = await getThemes()
+  const themes = allThemes.filter(t => t.downloads.some(d => d.os === os))
 
   return (
     <div className="pt-24 pb-20">
