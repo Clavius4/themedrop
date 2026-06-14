@@ -1,8 +1,14 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  output: 'standalone', // required for Docker multi-stage build
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      // Allow MinIO (local Docker) and any Supabase project URL
+      { protocol: 'http',  hostname: 'localhost' },
+      { protocol: 'http',  hostname: 'minio' },
+      { protocol: 'https', hostname: '*.supabase.co' },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   // Allow large download files to be served from /public/downloads

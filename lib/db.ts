@@ -122,6 +122,32 @@ export async function getSignedUploadUrl(
   bucket: string,
   path: string,
 ): Promise<{ signedUrl: string; publicUrl: string }> {
+  // Local Docker / self-hosted: use MinIO via AWS S3 SDK
+  if (process.env.S3_ENDPOINT) {
+    const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
+    const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner')
+    const client = new S3Client({
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION ?? 'us-east-1',
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID ?? 'minioadmin',
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? 'minioadmin',
+      },
+      forcePathStyle: true,
+    })
+    const internalUrl = await getSignedUrl(
+      client,
+      new PutObjectCommand({ Bucket: bucket, Key: path }),
+      { expiresIn: 3600 },
+    )
+    // Replace internal Docker hostname with the public-facing endpoint
+    const publicEndpoint = process.env.S3_PUBLIC_ENDPOINT ?? process.env.S3_ENDPOINT
+    const signedUrl = internalUrl.replace(process.env.S3_ENDPOINT, publicEndpoint)
+    const publicUrl = `${publicEndpoint}/${bucket}/${path}`
+    return { signedUrl, publicUrl }
+  }
+
+  // Production (Vercel): use Supabase Storage
   const db = await admin()
   const { data, error } = await db.storage.from(bucket).createSignedUploadUrl(path)
   if (error || !data) throw new Error(error?.message ?? 'Signed URL failed')
