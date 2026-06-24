@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getDBThemes, createTheme, ThemeInput } from '@/lib/db'
 
+export const runtime = 'edge'
+
 export async function GET() {
   const themes = await getDBThemes()
   return NextResponse.json(themes)

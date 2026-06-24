@@ -5,6 +5,7 @@ import { getDBThemes } from '@/lib/db'
 import { THEMES } from '@/lib/themes'
 import DeleteThemeButton from '@/components/admin/DeleteThemeButton'
 
+export const runtime = 'edge'
 export const revalidate = 0
 
 export default async function AdminDashboard() {

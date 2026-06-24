@@ -5,6 +5,7 @@ import FilterBar from '@/components/FilterBar'
 import { OS, Category } from '@/types'
 import { getThemes } from '@/lib/db'
 
+export const runtime = 'edge'
 export const revalidate = 60
 
 export const metadata: Metadata = {

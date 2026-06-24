@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getTheme, updateTheme, deleteTheme, ThemeInput } from '@/lib/db'
 
+export const runtime = 'edge'
+
 export async function GET(_: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const theme = await getTheme(slug)

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getSignedUploadUrl } from '@/lib/db'
 
+export const runtime = 'edge'
+
 export async function POST(request: Request) {
   const { bucket, path } = await request.json()
   if (!bucket || !path) return NextResponse.json({ error: 'bucket and path required' }, { status: 400 })
